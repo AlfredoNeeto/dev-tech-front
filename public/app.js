@@ -1,5 +1,5 @@
 const apiConfig = {
-  baseUrl: "https://localhost:7255"
+  baseUrl: "https://api.alfredonetodev.net"
 };
 
 const state = {

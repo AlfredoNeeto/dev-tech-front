@@ -8,6 +8,8 @@ const state = {
   overview: null,
   selectedDetail: null,
   selectedStack: null,
+  assistantOpen: false,
+  assistantSending: false,
   activeView: "overview",
   filters: {
     goal: "balanced",
@@ -115,8 +117,8 @@ async function loadSelectedStackDetail() {
   }
 }
 
-async function fetchJson(path) {
-  const response = await fetch(`${apiConfig.baseUrl}${path}`);
+async function fetchJson(path, options = {}) {
+  const response = await fetch(`${apiConfig.baseUrl}${path}`, options);
 
   if (!response.ok) {
     throw new Error(`API retornou ${response.status} em ${path}`);
@@ -149,6 +151,120 @@ function bindEvents() {
       setActiveView(button.dataset.view);
     });
   });
+
+  bindAssistantEvents();
+}
+
+function bindAssistantEvents() {
+  document.querySelector("#assistantToggle").addEventListener("click", () => {
+    setAssistantOpen(!state.assistantOpen);
+  });
+
+  document.querySelector("#assistantClose").addEventListener("click", () => {
+    setAssistantOpen(false);
+  });
+
+  document.querySelectorAll("[data-assistant-prompt]").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelector("#assistantInput").value = button.dataset.assistantPrompt;
+      document.querySelector("#assistantInput").focus();
+    });
+  });
+
+  document.querySelector("#assistantForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = document.querySelector("#assistantInput");
+    const message = input.value.trim();
+    if (!message || state.assistantSending) return;
+
+    input.value = "";
+    await sendAssistantMessage(message);
+  });
+}
+
+function setAssistantOpen(isOpen) {
+  state.assistantOpen = isOpen;
+  const widget = document.querySelector("#assistantWidget");
+  const panel = document.querySelector("#assistantPanel");
+  const toggle = document.querySelector("#assistantToggle");
+
+  widget.classList.toggle("open", isOpen);
+  panel.setAttribute("aria-hidden", String(!isOpen));
+  toggle.setAttribute("aria-expanded", String(isOpen));
+
+  if (isOpen) {
+    setTimeout(() => document.querySelector("#assistantInput").focus(), 80);
+  }
+}
+
+async function sendAssistantMessage(message) {
+  setAssistantOpen(true);
+  appendAssistantMessage(message, "user");
+  setAssistantSending(true);
+
+  try {
+    const response = await fetchJson("/api/assistant/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        context: buildAssistantContext()
+      })
+    });
+
+    const answer = response.answer ?? response.message ?? response.content ?? "Nao recebi uma resposta do assistente.";
+    appendAssistantMessage(answer, "system");
+  } catch {
+    appendAssistantMessage(
+      "O assistente ainda nao esta disponivel. Crie o endpoint POST /api/assistant/chat na API para ativar esta conversa.",
+      "error"
+    );
+  } finally {
+    setAssistantSending(false);
+  }
+}
+
+function appendAssistantMessage(text, type) {
+  const messages = document.querySelector("#assistantMessages");
+  const item = document.createElement("div");
+  item.className = `assistant-message assistant-message-${type}`;
+  item.textContent = text;
+  messages.appendChild(item);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function setAssistantSending(isSending) {
+  state.assistantSending = isSending;
+  const button = document.querySelector("#assistantSend");
+  button.disabled = isSending;
+  button.textContent = isSending ? "Enviando..." : "Enviar";
+}
+
+function buildAssistantContext() {
+  const selected = getSelectedStack();
+  const ranking = state.overview?.ranking?.slice(0, 5).map((item) => ({
+    stack: item.stack,
+    opportunityScore: item.opportunityScore,
+    totalJobs: item.totalJobs,
+    juniorPercent: item.juniorPercent,
+    remotePercent: item.remotePercent,
+    salaryMedian: item.salaryMedian,
+    trendPercent: item.trendPercent
+  })) ?? [];
+
+  return {
+    goal: state.filters.goal,
+    goalLabel: getGoalText(),
+    filters: { ...state.filters },
+    recommendation: state.overview?.recommendation ?? null,
+    summary: state.overview?.summary ?? null,
+    selectedStack: selected ?? null,
+    selectedDetail: state.selectedDetail ?? null,
+    topRanking: ranking,
+    dataSource: state.status?.dataSource ?? "Adzuna",
+    lastGoldRun: state.status?.lastGoldRun ?? null,
+    instruction: "Responda em portugues, use somente os dados enviados e diga quando faltar informacao."
+  };
 }
 
 function hydrateFilters(filters) {

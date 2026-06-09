@@ -58,6 +58,7 @@ input {
 button:focus-visible,
 select:focus-visible,
 input:focus-visible,
+textarea:focus-visible,
 a:focus-visible {
   outline: none;
   box-shadow: var(--focus);
@@ -1039,6 +1040,208 @@ h3 {
   background: oklch(19% 0.04 250);
 }
 
+.assistant-widget {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 60;
+}
+
+.assistant-toggle {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border: 1px solid oklch(68% 0.13 230 / 55%);
+  border-radius: 16px;
+  background: linear-gradient(135deg, oklch(42% 0.13 255), oklch(34% 0.1 225));
+  color: white;
+  box-shadow: 0 18px 44px oklch(6% 0.02 250 / 52%);
+  cursor: pointer;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.assistant-toggle:hover {
+  transform: translateY(-2px);
+  border-color: var(--cyan);
+}
+
+.assistant-toggle svg,
+.assistant-close svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.assistant-panel {
+  position: absolute;
+  right: 0;
+  bottom: 70px;
+  display: grid;
+  grid-template-rows: auto minmax(180px, 1fr) auto auto;
+  width: min(390px, calc(100vw - 28px));
+  max-height: min(620px, calc(100vh - 110px));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: oklch(13% 0.032 250 / 96%);
+  box-shadow: 0 24px 70px oklch(4% 0.02 250 / 72%);
+  backdrop-filter: blur(18px);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px) scale(.98);
+  transform-origin: bottom right;
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.assistant-widget.open .assistant-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.assistant-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.assistant-header strong {
+  display: block;
+  font-size: .98rem;
+}
+
+.assistant-header span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.4;
+}
+
+.assistant-close {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid var(--line-soft);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.assistant-close:hover {
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.assistant-messages {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 14px;
+  overflow: auto;
+}
+
+.assistant-message {
+  max-width: 86%;
+  padding: 11px 12px;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  color: var(--text);
+  background: oklch(18% 0.04 250);
+  font-size: .9rem;
+  line-height: 1.45;
+}
+
+.assistant-message-user {
+  justify-self: end;
+  border-color: oklch(58% 0.14 245 / 65%);
+  background: oklch(28% 0.09 250);
+}
+
+.assistant-message-system {
+  color: var(--muted);
+}
+
+.assistant-message-error {
+  border-color: oklch(65% 0.22 25 / 55%);
+  color: oklch(86% 0.09 25);
+}
+
+.assistant-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 14px 12px;
+}
+
+.assistant-prompts button {
+  min-height: 32px;
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  background: oklch(18% 0.04 250);
+  color: var(--muted);
+  padding: 0 10px;
+  font-size: .78rem;
+  cursor: pointer;
+}
+
+.assistant-prompts button:hover {
+  color: var(--text);
+  border-color: var(--cyan);
+}
+
+.assistant-form {
+  display: grid;
+  gap: 9px;
+  padding: 14px;
+  border-top: 1px solid var(--line-soft);
+  background: oklch(11% 0.025 250);
+}
+
+.assistant-form label {
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 750;
+}
+
+.assistant-form textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 74px;
+  max-height: 150px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: oklch(15% 0.035 250);
+  color: var(--text);
+  padding: 10px 11px;
+  font: inherit;
+}
+
+.assistant-form textarea::placeholder {
+  color: oklch(72% 0.035 250);
+}
+
+.assistant-form button {
+  min-height: 40px;
+  border: 1px solid oklch(58% 0.15 245 / 70%);
+  border-radius: 10px;
+  background: oklch(46% 0.15 250);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.assistant-form button:disabled {
+  cursor: wait;
+  opacity: .68;
+}
+
 @media (max-width: 1180px) {
   .app-shell {
     grid-template-columns: 300px minmax(0, 1fr);
@@ -1162,6 +1365,15 @@ h3 {
 
   #recommendedStack {
     font-size: 2rem;
+  }
+
+  .assistant-widget {
+    right: 14px;
+    bottom: 14px;
+  }
+
+  .assistant-panel {
+    bottom: 66px;
   }
 }
 

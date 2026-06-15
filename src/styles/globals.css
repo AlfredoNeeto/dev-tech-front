@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 0.625rem;
+  --background: 1 0 0;
+  --foreground: 0.145 0 0;
+  --card: 1 0 0;
+  --card-foreground: 0.145 0 0;
+  --popover: 1 0 0;
+  --popover-foreground: 0.145 0 0;
+  --primary: 0.546 0.245 262.881;
+  --primary-foreground: 0.985 0 0;
+  --secondary: 0.97 0 0;
+  --secondary-foreground: 0.205 0 0;
+  --muted: 0.965 0.006 255;
+  --muted-foreground: 0.47 0.02 255;
+  --accent: 0.94 0.016 255;
+  --accent-foreground: 0.29 0.03 255;
+  --destructive: 0.577 0.245 27.325;
+  --border: 0.91 0.008 255;
+  --input: 0.91 0.008 255;
+  --ring: 0.707 0.165 254.624;
+  --chart-1: 0.707 0.165 254.624;
+  --chart-2: 0.623 0.214 259.815;
+  --chart-3: 0.546 0.245 262.881;
+  --chart-4: 0.488 0.243 264.376;
+  --chart-5: 0.424 0.199 265.638;
+  --sidebar: 0.985 0.002 255;
+  --sidebar-foreground: 0.145 0 0;
+  --sidebar-primary: 0.546 0.245 262.881;
+  --sidebar-primary-foreground: 0.985 0 0;
+  --sidebar-accent: 0.95 0.012 255;
+  --sidebar-accent-foreground: 0.29 0.03 255;
+  --sidebar-border: 0.91 0.008 255;
+  --sidebar-ring: 0.707 0.165 254.624;
+}
+
+.dark {
+  --background: 0.168 0.014 255;
+  --foreground: 0.985 0 0;
+  --card: 0.205 0.016 255;
+  --card-foreground: 0.985 0 0;
+  --popover: 0.205 0.016 255;
+  --popover-foreground: 0.985 0 0;
+  --primary: 0.707 0.165 254.624;
+  --primary-foreground: 0.145 0 0;
+  --secondary: 0.255 0.016 255;
+  --secondary-foreground: 0.985 0 0;
+  --muted: 0.255 0.016 255;
+  --muted-foreground: 0.79 0.02 255;
+  --accent: 0.31 0.025 255;
+  --accent-foreground: 0.985 0 0;
+  --destructive: 0.704 0.191 22.216;
+  --border: 0.34 0.02 255;
+  --input: 0.34 0.02 255;
+  --ring: 0.707 0.165 254.624;
+  --chart-1: 0.769 0.115 246.7;
+  --chart-2: 0.707 0.165 254.624;
+  --chart-3: 0.623 0.214 259.815;
+  --chart-4: 0.546 0.245 262.881;
+  --chart-5: 0.488 0.243 264.376;
+  --sidebar: 0.205 0.016 255;
+  --sidebar-foreground: 0.985 0 0;
+  --sidebar-primary: 0.707 0.165 254.624;
+  --sidebar-primary-foreground: 0.145 0 0;
+  --sidebar-accent: 0.28 0.02 255;
+  --sidebar-accent-foreground: 0.985 0 0;
+  --sidebar-border: 0.34 0.02 255;
+  --sidebar-ring: 0.707 0.165 254.624;
+}
+
+* {
+  @apply border-border;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  font-family: "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
